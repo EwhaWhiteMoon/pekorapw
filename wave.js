@@ -1,10 +1,11 @@
-import {
-  Point
-} from './point.js'
+import {Point} from './point.js'
 
 export class Wave{
-  constructor(){
-    
+  constructor(index, totalPoints, color){
+    this.index = index;
+    this.totalPoints = totalPoints;
+    this.color = color;
+    this.points = [];
   }
 
   resize(stageWidth, stageHeight){
@@ -12,28 +13,53 @@ export class Wave{
     this.stageHeight = stageHeight;
 
     this.centerX = stageWidth / 2;
-    this.centerY = (stageHeight * 3) / 4
+    this.centerY = (stageHeight * 8) / 9;
+
+    this.pointGap = this.stageWidth / (this.totalPoints - 1);
 
     this.init();
   }
 
   init(){
-    this.point = new Point(
-      this.centerX,
-      this.centerY
-    );
+    this.points = [];
+
+    for(let i = 0; i < this.totalPoints; i++) {
+      this.points[i] = new Point(
+          this.index + i,
+          this.pointGap * i,
+          this.centerY,
+      );
+    }
   }
 
   draw(ctx){
     ctx.beginPath();
-    ctx.fillStyle = '#ed9121';
+    ctx.fillStyle = this.color;
 
-    this.point.update();
+    let prevX = this.points[0].x;
+    let prevY = this.points[0].y;
 
-    ctx.arc(
-      this.point.x, this.point.y,
-      30, 0, 2 * Math.PI
-    );
+    ctx.moveTo(prevX, prevY);
+
+    this.points.forEach((point, i) => {
+      if(0 < i && i < this.totalPoints - 1) {
+        point.update();
+      }
+
+      const cx = (prevX + point.x) / 2
+      const cy = (prevY + point.y) / 2;
+
+      ctx.quadraticCurveTo(prevX, prevY, cx, cy);
+
+      prevX = point.x;
+      prevY = point.y;
+    })
+
+    ctx.lineTo(prevX, prevY);
+    ctx.lineTo(this.stageWidth, this.stageHeight);
+    ctx.lineTo(0, this.stageHeight);
+    ctx.lineTo(this.points[0].x, this.points[0].y);
     ctx.fill();
+    ctx.closePath();
   }
 }

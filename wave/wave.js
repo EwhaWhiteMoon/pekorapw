@@ -1,4 +1,4 @@
-import {Point} from './point.js'
+import {WavePoint} from './wavepoint.js'
 
 export class Wave{
   constructor(index, totalPoints, color){
@@ -8,12 +8,19 @@ export class Wave{
     this.points = [];
   }
 
-  resize(stageWidth, stageHeight){
+  resize(stageWidth, stageHeight, wavePercent){
+    if(
+        this.stageHeight === stageHeight &&
+        this.stageWidth === stageWidth &&
+        this.wavePercent === wavePercent
+    ) return;
+
     this.stageWidth = stageWidth;
     this.stageHeight = stageHeight;
+    this.wavePercent = wavePercent;
 
-    this.centerX = stageWidth / 2;
-    this.centerY = (stageHeight * 8) / 9;
+    //this.centerX = stageWidth / 2;
+    this.centerY = stageHeight * wavePercent;
 
     this.pointGap = this.stageWidth / (this.totalPoints - 1);
 
@@ -24,8 +31,8 @@ export class Wave{
     this.points = [];
 
     for(let i = 0; i < this.totalPoints; i++) {
-      this.points[i] = new Point(
-          this.index + i,
+      this.points[i] = new WavePoint(
+          this.index + this.totalPoints - i,
           this.pointGap * i,
           this.centerY,
       );

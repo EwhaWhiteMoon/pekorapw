@@ -24,9 +24,9 @@ export class WaveGroup {
         }
     }
 
-    resize(stageWidth, stageHeight) {
+    resize(stageWidth, stageHeight, wavePercent) {
         this.waves.forEach((wave) => {
-            wave.resize(stageWidth, stageHeight);
+            wave.resize(stageWidth, stageHeight, wavePercent);
         })
     }
 
